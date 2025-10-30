@@ -7,13 +7,15 @@ import InboxPage from './pages/InboxPage'
 import TemplatesPage from './pages/TemplatesPage'
 import UnreadChatsPage from './pages/UnreadChatsPage' // ✅ Ruta correcta
 import SimulatedMessagesProvider from './components/SimulatedMessagesProvider'
-
+import SettingsPage from './pages/SettingsPage'
+import ThemeProvider from './components/ThemeProvider'
 
 export default function App() {
   const isAuthenticated = !!localStorage.getItem('authToken')
 
   return (
-    <BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
       <Routes>
         {/* Ruta pública */}
         <Route path="/login" element={<LoginPage />} />
@@ -36,12 +38,14 @@ export default function App() {
           <Route path="templates" element={<TemplatesPage />} />
           <Route path="unread" element={<UnreadChatsPage />} /> {/* ✅ Solo una vez */}
           
-          <Route path="settings" element={<div>Configuración</div>} />
+          
           <Route path="assigned" element={<AssignedChatsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
+    </ThemeProvider>
   )
 }

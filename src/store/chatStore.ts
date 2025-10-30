@@ -1,7 +1,10 @@
 // src/store/chatStore.ts
 import { create } from 'zustand'
 
+
 export type Platform = 'whatsapp' | 'facebook' | 'instagram' | 'tiktok' | 'all'
+
+export type UserRole = 'agent' | 'supervisor'
 
 export interface Message {
   id: string
@@ -30,6 +33,8 @@ export interface Template {
 }
 
 interface ChatStore {
+  userRole: UserRole
+  setUserRole: (role: UserRole) => void
   conversations: Conversation[]
   activeChatId: string | null
   filter: Platform
@@ -37,8 +42,10 @@ interface ChatStore {
   notifications: number
   templates: Template[]
 
+
+
   // Acciones
- setActiveChat: (id: string | null) => void
+  setActiveChat: (id: string | null) => void
   markAsRead: (id: string) => void
   addMessage: (conversationId: string, message: Omit<Message, 'id'>) => void
   setFilter: (platform: Platform) => void
@@ -60,7 +67,7 @@ const mockConversations: Conversation[] = [
     time: '10:30',
     unread: true,
     assignedTo: 'agent-1', // 👈 asignado a ti
-    messages: [ /* ... */ ]
+    messages: [ /* ... */]
   },
   {
     id: '2',
@@ -70,7 +77,7 @@ const mockConversations: Conversation[] = [
     time: '09:15',
     unread: false,
     assignedTo: 'agent-2', // 👈 asignado a otro agente
-    messages: [ /* ... */ ]
+    messages: [ /* ... */]
   },
   {
     id: '3',
@@ -88,8 +95,10 @@ const mockConversations: Conversation[] = [
 
 export const useChatStore = create<ChatStore>((set) => ({
   // Estado inicial
+  userRole: 'agent', // 👈 valor por defecto
+  
   conversations: mockConversations,
-  activeChatId: 'null',
+  activeChatId: null,
   filter: 'all',
   searchQuery: '',
   notifications: 0,
@@ -115,6 +124,7 @@ export const useChatStore = create<ChatStore>((set) => ({
   ],
 
   // Acciones
+  setUserRole: (role) => set({ userRole: role }),
   setActiveChat: (id) => set({ activeChatId: id }),
 
   markAsRead: (id) =>
@@ -131,11 +141,11 @@ export const useChatStore = create<ChatStore>((set) => ({
         conversations: state.conversations.map((conv) =>
           conv.id === conversationId
             ? {
-                ...conv,
-                lastMessage: newMessage.text,
-                time: 'Ahora',
-                messages: [...conv.messages, msgWithId],
-              }
+              ...conv,
+              lastMessage: newMessage.text,
+              time: 'Ahora',
+              messages: [...conv.messages, msgWithId],
+            }
             : conv
         ),
       }

@@ -3,24 +3,22 @@ import { useMemo } from 'react'
 import { useChatStore } from '../store/chatStore'
 import ChatWindow from '../components/chat/ChatWindow'
 
-// Simulamos que el agente actual es 'agent-1'
-const CURRENT_AGENT = 'agent-1'
-
 export default function AssignedChatsPage() {
-  const { conversations, activeChatId, setActiveChat } = useChatStore()
+  const { conversations, activeChatId, setActiveChat, userRole } = useChatStore()
 
+  // Filtrar chats asignados según el rol
   const assignedConversations = useMemo(() => {
-    return conversations.filter(conv => conv.assignedTo === CURRENT_AGENT)
-  }, [conversations])
+    if (userRole === 'supervisor') {
+      // Supervisor: ve todos los asignados (a cualquier agente)
+      return conversations.filter(conv => conv.assignedTo !== 'unassigned')
+    }
+    // Agente: solo ve los asignados a 'agent-1' (tú)
+    return conversations.filter(conv => conv.assignedTo === 'agent-1')
+  }, [conversations, userRole])
 
   const activeChat = activeChatId
     ? conversations.find(c => c.id === activeChatId)
     : null
-
-  // Si el chat activo no está asignado a este agente, limpiar selección
-  if (activeChatId && !assignedConversations.some(c => c.id === activeChatId)) {
-    setActiveChat(null)
-  }
 
   return (
     <div className="flex h-full">
@@ -28,7 +26,9 @@ export default function AssignedChatsPage() {
       <div className="w-96 border-r bg-white overflow-y-auto">
         {assignedConversations.length === 0 ? (
           <div className="p-6 text-center text-gray-500">
-            No tienes chats asignados
+            {userRole === 'agent'
+              ? 'No tienes chats asignados'
+              : 'No hay chats asignados'}
           </div>
         ) : (
           assignedConversations.map((conv) => (
@@ -51,7 +51,12 @@ export default function AssignedChatsPage() {
                  conv.platform === 'instagram' ? '🔴' : '⚫'}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate">{conv.name}</h3>
+                <div className="flex justify-between">
+                  <h3 className="font-medium text-gray-900 truncate">{conv.name}</h3>
+                  {userRole === 'supervisor' && (
+                    <span className="text-xs text-blue-600">{conv.assignedTo}</span>
+                  )}
+                </div>
                 <p className="text-sm text-gray-600 truncate">{conv.lastMessage}</p>
               </div>
             </div>
@@ -59,11 +64,13 @@ export default function AssignedChatsPage() {
         )}
       </div>
 
-      {/* Panel derecho */}
+      {/* Panel de chat */}
       <div className="flex-1 bg-gray-50">
         {activeChat ? <ChatWindow /> : (
           <div className="h-full flex items-center justify-center text-gray-500">
-            Selecciona un chat asignado
+            {userRole === 'agent'
+              ? 'Selecciona un chat asignado'
+              : 'Selecciona un chat'}
           </div>
         )}
       </div>

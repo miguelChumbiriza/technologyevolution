@@ -19,19 +19,19 @@ export default function Sidebar() {
   const location = useLocation()
 
   return (
-    <div className="w-64 bg-white border-r flex flex-col">
+    <div className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
       <div className="p-4">
-        <h1 className="text-xl font-bold text-gray-800">Technology Evolution</h1>
+        <h1 className="text-xl font-bold text-gray-800 dark:text-white">Technology Evolution</h1>
       </div>
       <nav className="flex-1 px-2 space-y-1">
         {navItems.map((item) => (
   <Link
     key={item.path}
     to={item.path}
-    className={`flex items-center justify-between px-3 py-2 rounded-lg ${
+    className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
       location.pathname === item.path
-        ? 'bg-blue-100 text-blue-700 font-medium'
-        : 'text-gray-700 hover:bg-gray-100'
+        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 font-medium'
+        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
     }`}
   >
     <div className="flex items-center gap-3">

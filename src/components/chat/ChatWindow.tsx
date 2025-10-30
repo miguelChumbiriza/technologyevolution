@@ -45,7 +45,7 @@ const handleSend = (e: React.FormEvent) => {
   return (
     <div className="flex flex-col h-full">
       {/* Encabezado del chat */}
-      <div className="bg-white border-b p-4">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
         <h2 className="font-semibold">{activeChat.name}</h2>
         <div className="flex items-center gap-2 mt-1">
           <span
@@ -66,7 +66,7 @@ const handleSend = (e: React.FormEvent) => {
       </div>
 
       {/* Historial de mensajes */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -108,7 +108,7 @@ const handleSend = (e: React.FormEvent) => {
       </div>
 
       {/* Área de composición (solo una) */}
-      <div className="bg-white border-t p-4">
+      <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
         <div className="flex gap-2 items-end">
           {/* Menú de plantillas */}
           {compatibleTemplates.length > 0 && (
@@ -160,7 +160,7 @@ const handleSend = (e: React.FormEvent) => {
               <button
                 type="submit"
                 disabled={!input.trim()}
-                className="bg-blue-600 text-white text-sm px-4 py-1 rounded hover:bg-blue-700 disabled:opacity-50"
+                className="bg-blue-500 text-white text-sm px-4 py-1 rounded hover:bg-blue-700 disabled:opacity-50"
               >
                 Enviar
               </button>
