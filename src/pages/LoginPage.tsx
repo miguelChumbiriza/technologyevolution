@@ -11,11 +11,12 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    // Simulación de login
     setTimeout(() => {
       setLoading(false)
       localStorage.setItem('authToken', 'fake-jwt-token')
-      navigate('/inbox')
-    }, 800)
+      navigate('/inbox', { replace: true }) // 👈 Usa { replace: true }
+    }, 600)
   }
 
   return (

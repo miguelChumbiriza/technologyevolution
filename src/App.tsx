@@ -1,28 +1,44 @@
 // src/App.tsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
+import MainLayout from './components/layout/MainLayout'
+import InboxPage from './pages/InboxPage'
+import TemplatesPage from './pages/TemplatesPage'
+import UnreadChatsPage from './pages/UnreadChatsPage' // ✅ Ruta correcta
+import SimulatedMessagesProvider from './components/SimulatedMessagesProvider'
 
-function App() {
+export default function App() {
   const isAuthenticated = !!localStorage.getItem('authToken')
 
   return (
     <BrowserRouter>
       <Routes>
+        {/* Ruta pública */}
         <Route path="/login" element={<LoginPage />} />
+
+        {/* Rutas protegidas */}
         <Route
           path="/"
           element={
             isAuthenticated ? (
-              <div className="p-6">Bandeja de entrada (próximamente)</div>
+              <SimulatedMessagesProvider>
+                <MainLayout />
+              </SimulatedMessagesProvider>
             ) : (
               <Navigate to="/login" replace />
             )
           }
-        />
+        >
+          <Route index element={<Navigate to="/inbox" replace />} />
+          <Route path="inbox" element={<InboxPage />} />
+          <Route path="templates" element={<TemplatesPage />} />
+          <Route path="unread" element={<UnreadChatsPage />} /> {/* ✅ Solo una vez */}
+          <Route path="assigned" element={<div>Chats asignados</div>} />
+          <Route path="settings" element={<div>Configuración</div>} />
+        </Route>
+
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   )
 }
-
-export default App
