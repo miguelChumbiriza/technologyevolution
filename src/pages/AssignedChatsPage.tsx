@@ -1,37 +1,37 @@
-// src/pages/UnreadChatsPage.tsx
-import { useEffect, useMemo } from 'react'
+// src/pages/AssignedChatsPage.tsx
+import { useMemo } from 'react'
 import { useChatStore } from '../store/chatStore'
 import ChatWindow from '../components/chat/ChatWindow'
 
-export default function UnreadChatsPage() {
+// Simulamos que el agente actual es 'agent-1'
+const CURRENT_AGENT = 'agent-1'
+
+export default function AssignedChatsPage() {
   const { conversations, activeChatId, setActiveChat } = useChatStore()
 
-  const unreadConversations = useMemo(() => {
-    return conversations.filter(conv => conv.unread)
+  const assignedConversations = useMemo(() => {
+    return conversations.filter(conv => conv.assignedTo === CURRENT_AGENT)
   }, [conversations])
-
-  // ✅ Efecto: si el chat activo NO está en "no leídos", limpiar selección
-  useEffect(() => {
-    const isActiveChatUnread = unreadConversations.some(conv => conv.id === activeChatId)
-    if (activeChatId && !isActiveChatUnread) {
-      setActiveChat(null) // o un ID inválido, pero null es más limpio
-    }
-  }, [activeChatId, unreadConversations, setActiveChat])
 
   const activeChat = activeChatId
     ? conversations.find(c => c.id === activeChatId)
     : null
 
+  // Si el chat activo no está asignado a este agente, limpiar selección
+  if (activeChatId && !assignedConversations.some(c => c.id === activeChatId)) {
+    setActiveChat(null)
+  }
+
   return (
     <div className="flex h-full">
-      {/* Lista de chats no leídos */}
+      {/* Lista de chats asignados */}
       <div className="w-96 border-r bg-white overflow-y-auto">
-        {unreadConversations.length === 0 ? (
+        {assignedConversations.length === 0 ? (
           <div className="p-6 text-center text-gray-500">
-            No tienes chats no leídos
+            No tienes chats asignados
           </div>
         ) : (
-          unreadConversations.map((conv) => (
+          assignedConversations.map((conv) => (
             <div
               key={conv.id}
               onClick={() => setActiveChat(conv.id)}
@@ -61,11 +61,9 @@ export default function UnreadChatsPage() {
 
       {/* Panel derecho */}
       <div className="flex-1 bg-gray-50">
-        {activeChat ? (
-          <ChatWindow />
-        ) : (
+        {activeChat ? <ChatWindow /> : (
           <div className="h-full flex items-center justify-center text-gray-500">
-            Selecciona un chat no leído
+            Selecciona un chat asignado
           </div>
         )}
       </div>

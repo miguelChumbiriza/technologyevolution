@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react'
 import { useChatStore } from '../../store/chatStore'
 
 export default function ChatWindow() {
-  const { conversations, activeChatId, addMessage, templates } = useChatStore()
+  const { conversations, activeChatId, addMessage, markAsRead, templates } = useChatStore()
+  
   const [input, setInput] = useState('')
 
   // Limpiar el input al cambiar de chat
@@ -19,18 +20,19 @@ export default function ChatWindow() {
     tpl.platform === 'all' || tpl.platform === activeChat?.platform
   )
 
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (input.trim() && activeChatId && activeChat) {
-      addMessage(activeChatId, {
-        text: input.trim(),
-        own: true,
-        platform: activeChat.platform,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      })
-      setInput('')
-    }
+const handleSend = (e: React.FormEvent) => {
+  e.preventDefault()
+  if (input.trim() && activeChatId && activeChat) {
+    addMessage(activeChatId, {
+      text: input.trim(),
+      own: true,
+      platform: activeChat.platform,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    })
+    markAsRead(activeChatId) // ✅ Ahora sí está definido
+    setInput('')
   }
+}
 
   if (!activeChat) {
     return (
